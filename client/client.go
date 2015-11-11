@@ -1,11 +1,15 @@
 package main
 
 import "github.com/drhayt/contentservice_client"
+import "math/rand"
 
 // "github.com/gorilla/rpc/v2/json2"
 // "github.com/haisum/rpcexample"
 
 func main() {
-	// utility_client.Ping(1)
-	contentservice_client.List(100100100)
+	for i := 0; i <= 500; i++ {
+		contentservice_client.List(rand.Intn(1000000) + 100000000)
+		// utility_client.Ping(0)
+	}
+
 }
