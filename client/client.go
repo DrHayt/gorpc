@@ -2,12 +2,13 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
 
+	"github.com/drhayt/bomstripper"
 	"github.com/gorilla/rpc/v2/json2"
 
 	// "github.com/gorilla/rpc/v2/json2"
 	// "github.com/haisum/rpcexample"
+
 	"log"
 	"net/http"
 )
@@ -17,8 +18,8 @@ func main() {
 	count := 3
 	for i = 1; i < count; i++ {
 		// test_multiply(i, i+2)
-		test_ping(i)
-		// test_prod_ping(i)
+		// test_ping(i)
+		test_prod_ping(i)
 	}
 }
 
@@ -32,7 +33,7 @@ func test_ping(a int) {
 	}
 
 	//  Procedure Arguments Struct
-	type Result int
+	type Result string
 
 	//  Procedure Arguments Filled out
 	args := &Args{
@@ -132,7 +133,9 @@ func test_prod_ping(a int) {
 	}
 
 	//  Procedure Arguments Struct
-	type Result string
+	type Result struct {
+		PingResponse string
+	}
 
 	//  Procedure Arguments Filled out
 	args := &Args{
@@ -163,12 +166,11 @@ func test_prod_ping(a int) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-
-	log.Printf("Received Result: %s\n", body)
+	bomstripper := &bomstripper.BomStrip{R: resp.Body}
 
 	var result Result
-	err = json2.DecodeClientResponse(resp.Body, &result)
+	// err = json2.DecodeClientResponse(resp.Body, &result)
+	err = json2.DecodeClientResponse(bomstripper, &result)
 	if err != nil {
 		log.Fatalf("Couldn't decode response. %s", err)
 	}
